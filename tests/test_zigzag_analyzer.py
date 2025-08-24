@@ -5,7 +5,7 @@ from unittest.mock import patch, MagicMock
 import sys
 import os
 
-# Add src to path for imports
+# Add project root to path for imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 from zigzag_analyzer import ZigZagAnalyzer
@@ -17,7 +17,7 @@ class TestZigZagAnalyzer:
     @pytest.fixture
     def sample_data(self):
         """Create sample data for testing."""
-        dates = pd.date_range('2023-01-01', periods=100, freq='15T')
+        dates = pd.date_range('2023-01-01', periods=100, freq='15min')
         data = {
             'Open time': dates,
             'Open': np.random.uniform(40000, 50000, 100),
