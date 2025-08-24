@@ -5,3 +5,5 @@ tensorflow
 requests
 ccxt
 matplotlib
+python-dotenv
+ta
