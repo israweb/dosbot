@@ -19,6 +19,7 @@ jobs:
         env:
           MINIO_ROOT_USER: minioadmin
           MINIO_ROOT_PASSWORD: minioadmin
+          MINIO_CONSOLE_ADDRESS: ":9001"
         ports:
           - 9001:9001
         options: >-
@@ -26,7 +27,6 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-        command: server /data --console-address ":9001"
       questdb:
         image: questdb/questdb:latest
         ports:
