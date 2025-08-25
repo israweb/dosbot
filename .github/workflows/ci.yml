@@ -13,48 +13,47 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ['3.9', '3.10', '3.11']
-  # Запуск MinIO и QuestDB отдельными шагами
-    - name: Start MinIO
-      run: |
-        docker run -d --name minio \
-          -e MINIO_ROOT_USER=minioadmin \
-          -e MINIO_ROOT_PASSWORD=minioadmin \
-          -e MINIO_CONSOLE_ADDRESS=":9001" \
-          -p 9001:9001 minio/minio:RELEASE.2023-12-02T10-51-33Z server /data
-        sleep 10
-    - name: Start QuestDB
-      run: |
-        docker run -d --name questdb -p 9000:9000 -p 9009:9009 questdb/questdb:latest
-        sleep 10
-    - name: Check MinIO health
-      run: |
-        docker ps -a
-        curl -f http://localhost:9001/minio/health/live
-    - name: Check QuestDB health
-      run: |
-        docker ps -a
-        curl -f http://localhost:9000
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-    - name: Run all tests with coverage
-      run: |
-        export PYTHONPATH="${PYTHONPATH}:$(pwd):$(pwd)/src"
-        python -m pytest tests/ -v --tb=short --cov=src --cov=. --cov-report=xml --cov-report=term
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v4
-      with:
-        file: ./coverage.xml
-        flags: unittests
-        name: codecov-umbrella
-      continue-on-error: true
+      - uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Start MinIO
+        run: |
+          docker run -d --name minio \
+            -e MINIO_ROOT_USER=minioadmin \
+            -e MINIO_ROOT_PASSWORD=minioadmin \
+            -e MINIO_CONSOLE_ADDRESS=":9001" \
+            -p 9001:9001 minio/minio:RELEASE.2023-12-02T10-51-33Z server /data
+          sleep 10
+      - name: Start QuestDB
+        run: |
+          docker run -d --name questdb -p 9000:9000 -p 9009:9009 questdb/questdb:latest
+          sleep 10
+      - name: Check MinIO health
+        run: |
+          docker ps -a
+          curl -f http://localhost:9001/minio/health/live
+      - name: Check QuestDB health
+        run: |
+          docker ps -a
+          curl -f http://localhost:9000
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Run all tests with coverage
+        run: |
+          export PYTHONPATH="${PYTHONPATH}:$(pwd):$(pwd)/src"
+          python -m pytest tests/ -v --tb=short --cov=src --cov=. --cov-report=xml --cov-report=term
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          file: ./coverage.xml
+          flags: unittests
+          name: codecov-umbrella
+        continue-on-error: true
 
   security:
     runs-on: ubuntu-latest
