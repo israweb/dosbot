@@ -26,11 +26,16 @@ jobs:
             -e MINIO_ROOT_PASSWORD=minioadmin \
             -e MINIO_CONSOLE_ADDRESS=":9001" \
             -p 9001:9001 minio/minio:RELEASE.2023-12-02T10-51-33Z server /data
-          sleep 10
       - name: Start QuestDB
         run: |
           docker run -d --name questdb -p 9000:9000 -p 9009:9009 questdb/questdb:latest
-          sleep 10
+      - name: Wait for services to be ready
+        run: |
+          sleep 30
+      - name: MinIO logs
+        run: docker logs minio || true
+      - name: QuestDB logs
+        run: docker logs questdb || true
       - name: Check MinIO health
         run: |
           docker ps -a
