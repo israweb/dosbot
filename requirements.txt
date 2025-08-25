@@ -7,3 +7,8 @@ ccxt
 matplotlib
 python-dotenv
 ta
+minio
+sqlalchemy
+great_expectations
+joblib
+pytest
