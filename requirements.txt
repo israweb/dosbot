@@ -12,3 +12,4 @@ sqlalchemy
 great_expectations
 joblib
 pytest
+pytest-cov
